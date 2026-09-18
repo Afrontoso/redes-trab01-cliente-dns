@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
+#include <time.h>
 
 int monta_qname(const char *nome, unsigned char *buf) {
     int pos = 0;
@@ -28,23 +30,42 @@ int monta_qname(const char *nome, unsigned char *buf) {
     return pos;
 }
 
+void escreve16(unsigned char *buf, int pos, unsigned int valor) {
+    buf[pos]     = (valor >> 8) & 0xFF;
+    buf[pos + 1] = valor & 0xFF;
+}
+
+
 int main(int argc, char *argv[]) {
-    unsigned char buf[256];
+    unsigned char buf[512];
 
     if (argc != 2) {
         printf("uso: %s <dominio>\n", argv[0]);
         return 1;
     }
 
-    int tamanho = monta_qname(argv[1], buf);
+    srand(time(NULL));
+    unsigned int id = rand() & 0xFFFF;
 
-    printf("qname tem %d bytes:\n", tamanho);
-    for (int i = 0; i < tamanho; i++) {
-        if (buf[i] >= 32 && buf[i] <= 126) {
-            printf("[%d '%c'] ", buf[i], buf[i]);
-        } else {
-            printf("[%d] ", buf[i]);
-        }
+    escreve16(buf, 0,  id);
+    escreve16(buf, 2,  0x0100);
+    escreve16(buf, 4,  0x0001);
+    escreve16(buf, 6,  0x0000);
+    escreve16(buf, 8,  0x0000);
+    escreve16(buf, 10, 0x0000);
+
+    int tam_qname = monta_qname(argv[1], buf + 12);
+    int pos = 12 + tam_qname;
+
+    escreve16(buf, pos, 15);
+    pos += 2;
+    escreve16(buf, pos, 1);
+    pos += 2;
+
+    printf("pacote com %d bytes:\n", pos);
+    for (int i = 0; i < pos; i++) {
+        printf("%02X ", buf[i]);
+        if ((i + 1) % 12 == 0) printf("\n");
     }
     printf("\n");
 
