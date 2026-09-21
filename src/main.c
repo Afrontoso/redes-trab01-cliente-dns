@@ -2,6 +2,10 @@
 #include <string.h>
 #include <stdlib.h>
 #include <time.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <unistd.h>
 
 int monta_qname(const char *nome, unsigned char *buf) {
     int pos = 0;
@@ -38,9 +42,11 @@ void escreve16(unsigned char *buf, int pos, unsigned int valor) {
 
 int main(int argc, char *argv[]) {
     unsigned char buf[512];
+    unsigned char resposta[512];
 
-    if (argc != 2) {
-        printf("uso: %s <dominio>\n", argv[0]);
+
+    if (argc != 3) {
+        printf("uso: %s <dominio> <ip_servidor>\n", argv[0]);
         return 1;
     }
 
@@ -62,12 +68,43 @@ int main(int argc, char *argv[]) {
     escreve16(buf, pos, 1);
     pos += 2;
 
-    printf("pacote com %d bytes:\n", pos);
-    for (int i = 0; i < pos; i++) {
-        printf("%02X ", buf[i]);
+    int sock = socket(AF_INET, SOCK_DGRAM, 0);
+    if (sock < 0) {
+        printf("erro ao criar socket\n");
+        return 1;
+    }
+
+    struct sockaddr_in servidor;
+    memset(&servidor, 0, sizeof(servidor));
+    servidor.sin_family = AF_INET;
+    servidor.sin_port = htons(53);
+
+    if (inet_pton(AF_INET, argv[2], &servidor.sin_addr) != 1) {
+        printf("ip invalido: %s\n", argv[2]);
+        close(sock);
+        return 1;
+    }
+
+    if (sendto(sock, buf, pos, 0, (struct sockaddr *)&servidor, sizeof(servidor)) < 0) {
+        printf("erro ao enviar\n");
+        close(sock);
+        return 1;
+    }
+
+    int recebidos = recvfrom(sock, resposta, sizeof(resposta), 0, NULL, NULL);
+    if (recebidos < 0) {
+        printf("erro ao receber\n");
+        close(sock);
+        return 1;
+    }
+
+    printf("resposta com %d bytes:\n", recebidos);
+    for (int i = 0; i < recebidos; i++) {
+        printf("%02X ", resposta[i]);
         if ((i + 1) % 12 == 0) printf("\n");
     }
     printf("\n");
 
+    close(sock);
     return 0;
 }
