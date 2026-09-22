@@ -39,6 +39,22 @@ void escreve16(unsigned char *buf, int pos, unsigned int valor) {
     buf[pos + 1] = valor & 0xFF;
 }
 
+int pula_nome(unsigned char *buf, int pos) {
+    while (1) {
+        unsigned char tam = buf[pos];
+
+        if (tam == 0) {
+            return pos + 1;
+        }
+
+        if ((tam & 0xC0) == 0xC0) {
+            return pos + 2;
+        }
+
+        pos += tam + 1;
+    }
+}
+
 
 int main(int argc, char *argv[]) {
     unsigned char buf[512];
@@ -104,6 +120,17 @@ int main(int argc, char *argv[]) {
         if ((i + 1) % 12 == 0) printf("\n");
     }
     printf("\n");
+
+    int p = 12;
+    p = pula_nome(resposta, p);
+    p += 4;
+
+    printf("resposta comeca no byte %d\n", p);
+
+    p = pula_nome(resposta, p);
+    p += 12;
+
+    printf("nome do MX comeca no byte %d\n", p);
 
     close(sock);
     return 0;
