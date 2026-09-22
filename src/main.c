@@ -55,6 +55,37 @@ int pula_nome(unsigned char *buf, int pos) {
     }
 }
 
+void le_nome(unsigned char *buf, int pos, char *saida) {
+    int s = 0;
+
+    while (1) {
+        unsigned char tam = buf[pos];
+
+        if (tam == 0) {
+            break;
+        }
+
+        if ((tam & 0xC0) == 0xC0) {
+            pos = ((tam & 0x3F) << 8) | buf[pos + 1];
+            continue;
+        }
+
+        if (s > 0) {
+            saida[s] = '.';
+            s++;
+        }
+
+        for (int i = 0; i < tam; i++) {
+            saida[s] = buf[pos + 1 + i];
+            s++;
+        }
+
+        pos += tam + 1;
+    }
+
+    saida[s] = '\0';
+}
+
 
 int main(int argc, char *argv[]) {
     unsigned char buf[512];
@@ -130,7 +161,9 @@ int main(int argc, char *argv[]) {
     p = pula_nome(resposta, p);
     p += 12;
 
-    printf("nome do MX comeca no byte %d\n", p);
+    char nome_mx[256];
+    le_nome(resposta, p, nome_mx);
+    printf("%s <> %s\n", argv[1], nome_mx);
 
     close(sock);
     return 0;
