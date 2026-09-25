@@ -150,9 +150,11 @@ int main(int argc, char *argv[]) {
 
         recebidos = recvfrom(sock, resposta, sizeof(resposta), 0, NULL, NULL);
 
-        if (recebidos > 0) {
+        if (recebidos >= 12 && le16(resposta, 0) == id) {
             break;
         }
+
+        recebidos = -1;
     }
 
     if (recebidos <= 0) {
