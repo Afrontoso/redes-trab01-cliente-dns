@@ -6,6 +6,7 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <unistd.h>
+#include <sys/time.h>
 
 int monta_qname(const char *nome, unsigned char *buf) {
     int pos = 0;
@@ -137,17 +138,27 @@ int main(int argc, char *argv[]) {
         return 1;
     }
     
-    if (sendto(sock, buf, pos, 0, (struct sockaddr *)&servidor, sizeof(servidor)) < 0) {
-        printf("erro ao enviar\n");
-        close(sock);
-        return 1;
+    struct timeval timeout;
+    timeout.tv_sec = 2;
+    timeout.tv_usec = 0;
+    setsockopt(sock, SOL_SOCKET, SO_RCVTIMEO, &timeout, sizeof(timeout));
+
+    int recebidos = -1;
+
+    for (int tentativa = 0; tentativa < 3; tentativa++) {
+        sendto(sock, buf, pos, 0, (struct sockaddr *)&servidor, sizeof(servidor));
+
+        recebidos = recvfrom(sock, resposta, sizeof(resposta), 0, NULL, NULL);
+
+        if (recebidos > 0) {
+            break;
+        }
     }
-    
-    int recebidos = recvfrom(sock, resposta, sizeof(resposta), 0, NULL, NULL);
-    if (recebidos < 0) {
-        printf("erro ao receber\n");
+
+    if (recebidos <= 0) {
+        printf("Nao foi possivel coletar entrada MX para %s\n", argv[1]);
         close(sock);
-        return 1;
+        return 0;
     }
     
     unsigned int rcode = resposta[3] & 0x0F;
