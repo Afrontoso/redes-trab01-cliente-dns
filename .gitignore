@@ -1,4 +1,5 @@
 meu_cliente
+meu_cliente.dSYM/
 *.o
 *.out
 *.zip
