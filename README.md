@@ -11,7 +11,7 @@ Professor: Tiago Alves
 | Nome | Matrícula |
 |------|-----------|
 | Victor | 222021826 |
-| (preencher) | |
+| Pedro Luiz  | 231036980|
 | (preencher) | |
 
 ## Sistema operacional utilizado
