@@ -11,7 +11,7 @@ Professor: Tiago Alves
 
 | Nome | Matrícula |
 |------|-----------|
-| Victor | 222021826 |
+| Victor Leandro Rocha de Assis| 222021826 |
 | Pedro Luiz | 231036980 |
 
 ## Sistema operacional utilizado
