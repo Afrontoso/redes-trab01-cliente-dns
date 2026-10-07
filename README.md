@@ -193,12 +193,3 @@ nome de dominio invalido: unb..br
 └── testes.sh      # cenários de teste manuais
 ```
 
-## Entrega
-
-Conforme o enunciado, compacte **sem o executável** (rode `make clean` antes),
-com o nome `nome_sobrenome_matricula_nome_sobrenome_matricula_trab01.zip`:
-
-```bash
-make clean
-zip -r nome_sobrenome_matricula_nome_sobrenome_matricula_trab01.zip README.md Makefile src testes.sh
-```
