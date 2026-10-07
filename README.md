@@ -13,6 +13,7 @@ Professor: Tiago Alves
 |------|-----------|
 | Victor Leandro Rocha de Assis| 222021826 |
 | Pedro Luiz | 231036980 |
+| Gabriel Saraiva Canabrava | 202045769
 
 ## Sistema operacional utilizado
 
