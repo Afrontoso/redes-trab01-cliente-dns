@@ -4,8 +4,8 @@ Cliente DNS em C que monta manualmente o pacote de consulta (RFC 1034 / RFC 1035
 e o envia via socket UDP para a porta 53 do servidor informado. Realiza apenas
 consultas do tipo **MX** (mail exchanger), classe **IN**.
 
-Disciplina: Fundamentos de Redes de Computadores - UnB/FCTE
-Professor: Tiago Alves
+- Disciplina: Fundamentos de Redes de Computadores - UnB/FCTE
+- Professor: Tiago Alves
 
 ## Integrantes
 
@@ -13,7 +13,7 @@ Professor: Tiago Alves
 |------|-----------|
 | Victor Leandro Rocha de Assis| 222021826 |
 | Pedro Luiz | 231036980 |
-| Gabriel Saraiva Canabrava | 202045769
+| Gabriel Saraiva Canabrava | 202045769 |
 
 ## Sistema operacional utilizado
 
